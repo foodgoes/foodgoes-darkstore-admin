@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodGoes Admin Orders</title>
+</head>
+<body>
+  <h1>Заказы</h1>
+  <div id="orders">
+    {% for order in orders %}
+      <div>
+        <div>{{ order.orderNumber }}</div>
+        <div>{{ order.date }}</div>
+        <div>financialStatus: {{ order.financialStatus }}</div>
+        <div>fulfillmentStatus: {{ order.fulfillmentStatus }}</div>
+        
+        <div>totalShippingPrice: {{ order.totalShippingPrice }}</div>
+        <div>totalTax: {{ order.totalTax }}</div>
+        <div>totalLineItemsPrice: {{ order.totalLineItemsPrice }}</div>
+        <div>totalDiscounts: {{ order.totalDiscounts }}</div>
+        <div>subtotalPrice: {{ order.subtotalPrice }}</div>
+        <div>totalPrice: {{ order.totalPrice }}</div>
+
+        <p>lineItems:</p>
+        <div>
+          {% for lineItem in order.lineItems %}
+            <div>productId: {{ lineItem.productId }}</div>
+            <div>title: {{ lineItem.title.ru }}</div>
+            <div>brand: {{ lineItem.brand.ru }}</div>
+            <div>price: {{ lineItem.price }}</div>
+            <div>quantity: {{ lineItem.quantity }}</div>
+            <div><img src="{{lineItem.image.srcWebp}}" width="100px"/></div>
+          {% endfor %}
+        </div>
+      </div>
+      <hr />
+    {% else %}
+      <p>Orders are empty.</p>
+    {% endfor %}
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('orders', function(order) {
+            console.log(order);
+
+            window.scrollTo(0, 0);
+        });
+    </script>
+</body>
+</html>
