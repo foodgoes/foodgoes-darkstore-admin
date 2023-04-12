@@ -139,7 +139,7 @@ app.get("/orders", session, async function (req, res, next) {
     }
 });
 
-app.post("/orders", async function (req, res, next) {
+app.post("/api/orders", async function (req, res, next) {
     try {
         if (!req.body.id) {
             throw('ID require');
