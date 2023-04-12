@@ -49,91 +49,91 @@ const session = ironSession({
 const {getFullDate} = require('./utils/date');
 
 app.get("/admin/orders", session, async function (req, res, next) {
-    if (!req.session.user) {
-        throw("Auth error")
-    }
-
-    const status = req.query.status;
-
     try {
-        const user = await User.findById(req.session.user.id);
-        if (!user) {
-            throw("user not found");
-        }
-        if (!user.isAdmin) {
-            throw("user does not have permissions");
-        }
+      if (!req.session.user) {
+          throw("Auth error")
+      }
 
-        let filter = {$and: [{financialStatus: {$ne: 'paid'}}, {fulfillmentStatus: {$ne: 'fulfilled'}}]};
-        if (status === 'completed') {
-          filter = {$and: [{financialStatus: 'paid'}, {fulfillmentStatus: 'fulfilled'}]};
-        }
+      const status = req.query.status;
 
-        const orders = [];
-        const ordersFromDB = await Order.find(filter, null, {skip: 0, limit: 35}).sort({_id: -1});
-        for (let order of ordersFromDB) {
-            const date = getFullDate(order.createdAt);
+      const user = await User.findById(req.session.user.id);
+      if (!user) {
+          throw("user not found");
+      }
+      if (!user.isAdmin) {
+          throw("user does not have permissions");
+      }
 
-            const productIds = order.lineItems.map(i => i.productId);
-            const products = await Product.find({'_id': {$in: productIds}});
-            const lineItems = order.lineItems.map(item => {
-              const product = products.find(p => p.id === String(item.productId));
-              const images = product.images.map(img => ({
-                src: img.src,
-                srcWebp: img.srcWebp,
-                width: img.width,
-                height: img.height,
-                alt: img.alt
-              }));
+      let filter = {$and: [{financialStatus: {$ne: 'paid'}}, {fulfillmentStatus: {$ne: 'fulfilled'}}]};
+      if (status === 'completed') {
+        filter = {$and: [{financialStatus: 'paid'}, {fulfillmentStatus: 'fulfilled'}]};
+      }
 
-              return {
-                id: item.id,
-                title: item.title,
-                brand: item.brand,
-                price: item.price,
-                quantity: item.quantity,
-                displayAmount: item.displayAmount,
-                unit: item.unit,
-                productId: item.productId,
-                image: images.length ? images[0] : null,
-                images
-              };
-            });
+      const orders = [];
+      const ordersFromDB = await Order.find(filter, null, {skip: 0, limit: 35}).sort({_id: -1});
+      for (let order of ordersFromDB) {
+          const date = getFullDate(order.createdAt);
 
-            const user = await User.findById(order.userId);
-            if (!user) {
-              continue;
-            }
-            const customer = {
-              id: user.id,
-              phone: user.phone,
-              locale: user.locale
+          const productIds = order.lineItems.map(i => i.productId);
+          const products = await Product.find({'_id': {$in: productIds}});
+          const lineItems = order.lineItems.map(item => {
+            const product = products.find(p => p.id === String(item.productId));
+            const images = product.images.map(img => ({
+              src: img.src,
+              srcWebp: img.srcWebp,
+              width: img.width,
+              height: img.height,
+              alt: img.alt
+            }));
+
+            return {
+              id: item.id,
+              title: item.title,
+              brand: item.brand,
+              price: item.price,
+              quantity: item.quantity,
+              displayAmount: item.displayAmount,
+              unit: item.unit,
+              productId: item.productId,
+              image: images.length ? images[0] : null,
+              images
             };
+          });
 
-            orders.push({
-              id: order.id,
-              orderNumber: order.orderNumber,
-              date,
-              financialStatus: order.financialStatus,
-              fulfillmentStatus: order.fulfillmentStatus,
-              totalShippingPrice: order.totalShippingPrice,
-              totalTax: order.totalTax,
-              totalLineItemsPrice: order.totalLineItemsPrice, 
-              totalDiscounts: order.totalDiscounts,
-              subtotalPrice: order.subtotalPrice,
-              totalPrice: order.totalPrice,
-              lineItems,
-              shippingAddress: {
-                address1: order.shippingAddress.address1
-              },
-              customer
-            });
-        }
+          const user = await User.findById(order.userId);
+          if (!user) {
+            continue;
+          }
+          const customer = {
+            id: user.id,
+            phone: user.phone,
+            locale: user.locale
+          };
 
-        const count = await Order.countDocuments(filter);
+          orders.push({
+            id: order.id,
+            orderNumber: order.orderNumber,
+            date,
+            financialStatus: order.financialStatus,
+            fulfillmentStatus: order.fulfillmentStatus,
+            totalShippingPrice: order.totalShippingPrice,
+            totalTax: order.totalTax,
+            totalLineItemsPrice: order.totalLineItemsPrice, 
+            totalDiscounts: order.totalDiscounts,
+            subtotalPrice: order.subtotalPrice,
+            totalPrice: order.totalPrice,
+            lineItems,
+            shippingAddress: {
+              address1: order.shippingAddress.address1
+            },
+            customer
+          });
+      }
 
-        const content_for_layout = await liquidEngine.renderFile('orders', {orders, count, status});
-        res.render('layout', {content_for_layout});
+      const count = await Order.countDocuments(filter);
+
+      const content_for_layout = await liquidEngine.renderFile('orders', {orders, count, status});
+      res.render('layout', {content_for_layout});
     } catch(e) {
         next(e);
     }
