@@ -1,0 +1,35 @@
+<div class="order">
+    <div class="orderNumber">#{{ order.orderNumber }}{% if order.done %} <span class="status"> — завершен</span>{%endif%}</div>
+    <div class="date">{{ order.date }}</div>
+
+    <div class="statuses">
+      <div class="row"><span>Статус оплаты</span> {{ order.financialStatus }}</div>
+      <div class="row"><span>Статус доставки</span>{{ order.fulfillmentStatus }}</div>
+    </div>
+
+    <div class="totals">
+      <div class="row"><span>В итоге</span>&#8362;{{ order.totalPrice }}</div>
+      <div class="row"><span>Доставка</span>&#8362;{{ order.totalShippingPrice }}</div>
+      <div class="row"><span>Товаров</span>&#8362;{{ order.totalLineItemsPrice }}</div>
+    </div>
+
+    <div class="row"><span>Покупатель</span>{{ order.customer.phone }}</div>
+    <div class="row"><span>Адрес доставки</span>{{ order.shippingAddress.address1 }}</div>
+
+    <div>
+      <span class="subheading">Продукты ({{ order.lineItems.size }})</span>
+      <div>
+        {% for lineItem in order.lineItems %}
+          <div class="lineItem">
+            <div>{{ forloop.index }}.</div>
+            <img src="{{lineItem.image.srcWebp}}" width="70px"/>
+            <div>
+              <div>{{ lineItem.title.ru }}</div>
+              <div>{{ lineItem.displayAmount }} {{ lineItem.unit }}</div>
+              <div>&#8362;{{ lineItem.price }} × {{ lineItem.quantity }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
