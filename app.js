@@ -3,13 +3,13 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {path: '/admin/socket.io'});
 require('dotenv').config()
 const {ironSession} = require("iron-session/express");
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const expressRobotsTxt = require('express-robots-txt');
-
+const path = require('path');
 const User = require("./models/user");
 const Order = require("./models/order");
 const Product = require("./models/product");
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 app.use(expressRobotsTxt({UserAgent: '*', Disallow: '/'}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
-app.use(express.static('./public'));
+app.use('/admin', express.static(path.join(__dirname, 'public')))
 
 const liquidEngine = new Liquid({
   root: ['views/', 'views/pages/', 'views/snippets/'],
@@ -48,7 +48,7 @@ const session = ironSession({
 
 const {getFullDate} = require('./utils/date');
 
-app.get("/orders", session, async function (req, res, next) {
+app.get("/admin/orders", session, async function (req, res, next) {
     if (!req.session.user) {
         throw("Auth error")
     }
@@ -139,7 +139,7 @@ app.get("/orders", session, async function (req, res, next) {
     }
 });
 
-app.post("/api/orders", async function (req, res, next) {
+app.post("/admin/api/orders", async function (req, res, next) {
     try {
         if (!req.body.id) {
             throw('ID require');
@@ -213,6 +213,18 @@ app.post("/api/orders", async function (req, res, next) {
     } catch(e) {
         next(e);
     }
+});
+
+app.post("/admin/api/complete_order", async function (req, res, next) {
+  const orderId = req.body.orderId;
+
+  try {
+    await Order.findByIdAndUpdate(orderId, {financialStatus: 'paid', fulfillmentStatus: 'fulfilled', updatedAt: new Date()});
+
+    res.redirect('/admin/orders');
+  } catch (e) {
+    next(e);
+  }
 });
 
 app.use((req, res, next) => {

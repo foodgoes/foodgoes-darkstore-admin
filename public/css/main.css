@@ -1,18 +1,18 @@
 @font-face {
     font-family: OpenSans;
-    src: url('/fonts/open-sans/OpenSans-Regular.ttf');
+    src: url('/admin/fonts/open-sans/OpenSans-Regular.ttf');
     font-weight: 400;
     font-style: 'normal';
 }
 @font-face {
     font-family: 'OpenSans';
-    src: url('/fonts/open-sans/OpenSans-Medium.ttf');
+    src: url('/admin/fonts/open-sans/OpenSans-Medium.ttf');
     font-weight: 500;
     font-style: 'normal';
 }
 @font-face {
     font-family: 'OpenSans';
-    src: url('/fonts/open-sans/OpenSans-Bold.ttf');
+    src: url('/admin/fonts/open-sans/OpenSans-Bold.ttf');
     font-weight: 700;
     font-style: 'normal';
 }
@@ -108,10 +108,6 @@ main {
     margin: 0 5px;
     min-width: 70px;
 }
-.status {
-    color: green;
-    font-weight: 500;
-}
 
 .totals, .statuses {
     display: flex;
@@ -128,4 +124,31 @@ main {
 .filter a.active {
     border-bottom: 1px solid #000;
     font-weight: 500;
+}
+
+.alignRight {
+    text-align: right;
+}
+
+.button {
+    width: 100%;
+    overflow: hidden;
+    transition-duration: .15s;
+    transition-property: box-shadow;
+    transition-timing-function: ease-in-out;
+    position: relative;
+    appearance: none;
+    cursor: pointer;
+    padding: 0 12px 0 12px;
+    border-radius: 16px;
+    height: 48px;
+    min-width: 48px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #efeeed;
+    border: 0;
+    font-size: 14px;
+    margin: 21px 0;
 }

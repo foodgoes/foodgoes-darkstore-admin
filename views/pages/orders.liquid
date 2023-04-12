@@ -1,6 +1,6 @@
 <div class="filter">
-  <div><a href="/orders"{% if status == undefined %} class="active"{% endif %}>Необработанные</a></div>
-  <div><a href="/orders?status=completed"{% if status %} class="active"{% endif %}>Завершенные</a></div>
+  <div><a href="/admin/orders"{% if status == undefined %} class="active"{% endif %}>Необработанные</a></div>
+  <div><a href="/admin/orders?status=completed"{% if status %} class="active"{% endif %}>Завершенные</a></div>
 </div>
 
 <h1 class="titlePage">{% if status %}Завершенные заказы{% else %}Необработанные заказы{% endif %} 
@@ -8,7 +8,7 @@
 
 <div class="orders"{% if status %} data-status="completed"{%endif%}>
   {% for order in orders %}
-    {% render 'order-card-list', order: order %}
+    {% render 'order-card-list', order: order, status: status %}
   {% else %}
     <p>Заказов нет.</p>
   {% endfor %}

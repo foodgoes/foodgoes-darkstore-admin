@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io({path: '/admin/socket.io'});
 
 const ttlOrders = document.querySelector('.ttlOrders');
 const orders = document.querySelector('.orders');
