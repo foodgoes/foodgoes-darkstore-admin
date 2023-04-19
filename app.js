@@ -91,6 +91,7 @@ app.get("/admin/orders", session, async function (req, res, next) {
               title: item.title,
               brand: item.brand,
               price: item.price,
+              grams: item.grams,
               quantity: item.quantity,
               displayAmount: item.displayAmount,
               unit: item.unit,
@@ -122,6 +123,7 @@ app.get("/admin/orders", session, async function (req, res, next) {
             totalDiscounts: order.totalDiscounts,
             subtotalPrice: order.subtotalPrice,
             totalPrice: order.totalPrice,
+            totalWeight: order.totalWeight,
             lineItems,
             shippingAddress: {
               address1: order.shippingAddress.address1
@@ -139,7 +141,7 @@ app.get("/admin/orders", session, async function (req, res, next) {
     }
 });
 
-app.post("/admin/api/orders", async function (req, res, next) {
+app.post("/admin/api/alert/new_order", async function (req, res, next) {
     try {
         if (!req.body.id) {
             throw('ID require');
@@ -156,7 +158,6 @@ app.post("/admin/api/orders", async function (req, res, next) {
     
         const productIds = order.lineItems.map(i => i.productId);
         const products = await Product.find({'_id': {$in: productIds}});
-
         const lineItems = order.lineItems.map(item => {
           const product = products.find(p => p.id === String(item.productId));
           const images = product.images.map(img => ({
@@ -172,10 +173,13 @@ app.post("/admin/api/orders", async function (req, res, next) {
             title: item.title,
             brand: item.brand,
             price: item.price,
+            grams: item.grams,
             quantity: item.quantity,
+            displayAmount: item.displayAmount,
+            unit: item.unit,
             productId: item.productId,
-            images,
-            image: images.length ? images[0] : null
+            image: images.length ? images[0] : null,
+            images
           };
         });
 
@@ -198,6 +202,7 @@ app.post("/admin/api/orders", async function (req, res, next) {
           totalDiscounts: order.totalDiscounts,
           subtotalPrice: order.subtotalPrice,
           totalPrice: order.totalPrice,
+          totalWeight: order.totalWeight,
           lineItems,
           shippingAddress: {
             address1: order.shippingAddress.address1
