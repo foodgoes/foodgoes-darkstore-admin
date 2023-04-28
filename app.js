@@ -111,6 +111,13 @@ app.get("/admin/orders", session, async function (req, res, next) {
             locale: user.locale
           };
 
+          let discount = null;
+          if (order.discount) {
+            discount = {
+              code: order.discount.code
+            };
+          }
+
           orders.push({
             id: order.id,
             orderNumber: order.orderNumber,
@@ -124,6 +131,7 @@ app.get("/admin/orders", session, async function (req, res, next) {
             subtotalPrice: order.subtotalPrice,
             totalPrice: order.totalPrice,
             totalWeight: order.totalWeight,
+            discount,
             lineItems,
             shippingAddress: {
               address1: order.shippingAddress.address1
@@ -190,6 +198,13 @@ app.post("/admin/api/alert/new_order", async function (req, res, next) {
           locale: user.locale
         };
 
+        let discount = null;
+        if (order.discount) {
+          discount = {
+            code: order.discount.code
+          };
+        }
+
         const output = {
           id: order.id,
           orderNumber: order.orderNumber,
@@ -203,6 +218,7 @@ app.post("/admin/api/alert/new_order", async function (req, res, next) {
           subtotalPrice: order.subtotalPrice,
           totalPrice: order.totalPrice,
           totalWeight: order.totalWeight,
+          discount,
           lineItems,
           shippingAddress: {
             address1: order.shippingAddress.address1

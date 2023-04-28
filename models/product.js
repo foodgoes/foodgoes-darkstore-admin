@@ -88,12 +88,6 @@ const ProductSchema = new Schema({
         maxlength: 15,
         default: 0.00
     },
-    compareAtPrice: {
-        type: Number,
-        min: 0.00,
-        maxlength: 15,
-        default: 0.00
-    },
     pricePerUnit: {
         type: Number,
         min: 0.00,
@@ -128,13 +122,7 @@ const ProductSchema = new Schema({
         type: Boolean,
         default: false
     },
-    weightUnit: {
-        type: String,
-        required: true,
-        enum: ['g', 'kg', 'oz', 'lb'],
-        default: 'g'
-    },
-    weight: {
+    grams: {
         type: Number,
         default: 0
     },

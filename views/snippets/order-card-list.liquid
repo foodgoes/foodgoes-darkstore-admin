@@ -10,10 +10,16 @@
       </div>
     </div>
 
+    {% if order.discount %}
+      <div>
+        <div class="row"><span>Скидка</span> {{ order.discount.code }}</div>
+      </div>
+    {% endif %}
+
     <div class="totals">
       <div class="row"><span>В итоге</span>&#8362;{{ order.totalPrice }}</div>
       <div class="row"><span>Доставка</span>&#8362;{{ order.totalShippingPrice }}</div>
-      <div class="row alignRight"><span>Товаров</span>&#8362;{{ order.totalLineItemsPrice }}</div>
+      <div class="row alignRight"><span>Товаров</span>&#8362;{{ order.subtotalPrice }}</div>
     </div>
 
     <div class="row"><span>Покупатель</span>{{ order.customer.phone }}</div>
